@@ -244,16 +244,16 @@ readVizgen <- function(data_dir,
                        tiff_path = NULL,
                        method_name = "Vizgen") {
 
-    exprsMat <- data.table::fread(file.path(data_dir, "cell_by_gene.csv"))
+    exprsMat <- data.table::fread(file.path(data_dir, "cell_by_gene.csv"),colClasses = c(cell = 'character'))
     cell_idx <- exprsMat[, 1]
     exprsMat <- exprsMat[, -1]
     exprsMat <- as(as.matrix(t(exprsMat)), "dgCMatrix")
     colnames(exprsMat) <- paste("Cell", unlist(cell_idx), sep = "_")
     exprsMat <- exprsMat[!grepl(filter_gene_pattern, rownames(exprsMat)), ]
 
-    metadata <- read.csv(file.path(data_dir, "cell_metadata.csv"))
-    metadata <- metadata[order(metadata$X), ]
-    metadata$cell_id <- metadata$X
+    metadata <- read.csv(file.path(data_dir, "cell_metadata.csv"),colClasses = c(EntityID = 'character'))
+    metadata <- metadata[order(metadata$EntityID), ]
+    metadata$cell_id <- metadata$EntityID
     rownames(metadata) <- paste("Cell", metadata$cell_id, sep = "_")
     metadata <- metadata[colnames(exprsMat), ]
 
